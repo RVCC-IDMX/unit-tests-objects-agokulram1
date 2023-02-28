@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 /* resistor.js */
 
@@ -62,7 +63,7 @@
  * then use the copied object like a lookup table
  */
 function getColorValue(color) {
-  // write your code here & return value
+  return colorCodes[color];
 }
 
 /**
@@ -79,7 +80,7 @@ function getColorValue(color) {
  * then use the copied object like a lookup table
  */
 function getMultiplierValue(color) {
-  // write your code here & return value
+  return multiplierCodes[color];
 }
 
 /**
@@ -106,7 +107,14 @@ function getMultiplierValue(color) {
  *
  */
 function getThreeBandValue(bands) {
-  // write your code here & return value
+  const value = +`${getColorValue(bands.color1)}${getColorValue(bands.color2)}` * getMultiplierValue(bands.multiplier);
+  let formattedValue = value;
+  if (bands.multiplier === 'gold') {
+    formattedValue = +value.toFixed(1);
+  } else if (bands.multiplier === 'silver') {
+    formattedValue = +value.toFixed(2);
+  }
+  return formattedValue;
 }
 
 /**
@@ -131,7 +139,21 @@ function getThreeBandValue(bands) {
  *
  */
 function formatNumber(val) {
-  // write your code here & return value
+  let value = val;
+  let metric = '';
+  if (value >= 1000000000) {
+    value /= 1000000000;
+    metric = 'G';
+  }
+  if (value >= 1000000) {
+    value /= 1000000;
+    metric = 'M';
+  }
+  if (value >= 1000) {
+    value /= 1000;
+    metric = 'k';
+  }
+  return value + metric;
 }
 
 /**
@@ -150,7 +172,17 @@ function formatNumber(val) {
  * example: 'green' => '±0.5%'
  */
 function getTolerance(color) {
-  // write your code here & return value
+  const toleranceCodes = {
+    brown: '±1%',
+    red: '±2%',
+    green: '±0.5%',
+    blue: '±0.25%',
+    violet: '±0.1%',
+    grey: '±0.05%',
+    gold: '±5%',
+    silver: '±10%',
+  };
+  return toleranceCodes[color];
 }
 
 /**
@@ -182,7 +214,10 @@ function getTolerance(color) {
  * must use functions in this file to build the string using a template literal
  */
 function getResistorOhms(bands) {
-  // write your code here & return value
+  const value = getThreeBandValue(bands);
+  const formattedValue = formatNumber(value);
+  const tolerance = getTolerance(bands.tolerance);
+  return `Resistor value: ${formattedValue} Ohms ${tolerance}`;
 }
 
 module.exports = {
